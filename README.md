@@ -1,3 +1,6 @@
+## Disclaimer
+This is an unofficial, community-created plugin. It is not affiliated with, endorsed by, or sponsored by Madlions. The device image and brand names used in this plugin are for identification and compatibility purposes only under nominative fair use. This project is entirely non-profit and open-source.
+
 # Madlions MAD 68HE — SignalRGB Plugin
 
 Per-key RGB control for the **Madlions MAD 68HE** mechanical keyboard in [SignalRGB](https://www.signalrgb.com/).
@@ -54,4 +57,7 @@ Each bank maps to a keyboard row. Wider modifier keys create gaps in the slot nu
 
 - **Keyboard not detected:** Make sure the official configurator web app is closed. Only one application can claim the HID endpoint.
 - **Some keys show wrong colors:** The key matrix mapping may need adjustment for your firmware version. Open an issue with the key name and I'll fix it.
+
+
+**Use at your own risk.** This software is provided "as-is", without warranty of any kind. By using this plugin, you agree that the author is not responsible for any unexpected behavior or potential damage to your device.
 
