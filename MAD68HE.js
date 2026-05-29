@@ -14,6 +14,10 @@ export function VendorId()  { return 0x373B; }
 export function ProductId() { return 0x105C; }
 export function Type()      { return "hid"; }
 
+export function ImageUrl() { 
+    return "https://madlionskeyboard.com/wp-content/uploads/2024/11/MAD68-HE-keycaps.jpg"; 
+}
+
 export function ControllableParameters() {
     return [
         { "property": "shutdownColor", "group": "", "label": "Shutdown Color", "min": "0", "max": "360", "type": "color", "default": "#000000" },
