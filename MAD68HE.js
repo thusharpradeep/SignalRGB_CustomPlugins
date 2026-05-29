@@ -32,26 +32,26 @@ export function Size() { return [15, 5]; }
 
 export function LedNames() {
     return [
-        "Key: Escape", "Key: 1", "Key: 2", "Key: 3", "Key: 4", "Key: 5",
-        "Key: 6", "Key: 7", "Key: 8", "Key: 9", "Key: 0", "Key: -", "Key: =",
-        "Key: Backspace", "Key: Insert",
+        "Esc", "1", "2", "3", "4", "5",
+        "6", "7", "8", "9", "0", "-_", "=+",
+        "Backspace", "Insert",
 
-        "Key: Tab", "Key: Q", "Key: W", "Key: E", "Key: R", "Key: T",
-        "Key: Y", "Key: U", "Key: I", "Key: O", "Key: P", "Key: [", "Key: ]",
-        "Key: \\", "Key: Delete",
+        "Tab", "Q", "W", "E", "R", "T",
+        "Y", "U", "I", "O", "P", "[", "]",
+        "\\", "Delete",
 
-        "Key: Caps Lock", "Key: A", "Key: S", "Key: D", "Key: F", "Key: G",
-        "Key: H", "Key: J", "Key: K", "Key: L", "Key: ;", "Key: '",
-        "Key: Enter", "Key: Page Up",
+        "CapsLock", "A", "S", "D", "F", "G",
+        "H", "J", "K", "L", ";", "'",
+        "Enter", "Page Up",
 
-        "Key: Left Shift", "Key: Z", "Key: X", "Key: C", "Key: V", "Key: B",
-        "Key: N", "Key: M", "Key: ,", "Key: .", "Key: /",
-        "Key: Right Shift", "Key: Up Arrow", "Key: Page Down",
+        "Left Shift", "Z", "X", "C", "V", "B",
+        "N", "M", ",", ".", "/",
+        "Right Shift", "Up Arrow", "Page Down",
 
-        "Key: Left Control", "Key: Left Windows", "Key: Left Alt",
-        "Key: Space",
-        "Key: Right Alt", "Key: Fn", "Key: Right Control",
-        "Key: Left Arrow", "Key: Down Arrow", "Key: Right Arrow"
+        "Left Ctrl", "Left Win", "Left Alt",
+        "Space",
+        "Right Alt", "Fn", "Right Ctrl",
+        "Left Arrow", "Down Arrow", "Right Arrow"
     ];
 }
 
@@ -111,6 +111,7 @@ let prevPackets = null;
 
 export function Initialize() {
     prevPackets = null;
+    device.addFeature("keyboard");
 }
 
 export function Render() {
