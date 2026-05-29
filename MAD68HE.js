@@ -114,12 +114,23 @@ export function Initialize() {
     device.addFeature("keyboard");
 }
 
+let lastUpdate = 0;
+
 export function Render() {
+    // Limit updates to ~33fps (30ms) to prevent USB endpoint flooding
+    // while maintaining smooth visual effects.
+    let now = Date.now();
+    if (now - lastUpdate < 30) {
+        return;
+    }
+    lastUpdate = now;
+
     const packets = [];
     for (let b = 0; b < 5; b++) {
         packets[b] = [new Array(24).fill(0), new Array(24).fill(0)];
     }
 
+    let anyChanged = false;
     for (let i = 0; i < keyMap.length; i++) {
         const k = keyMap[i];
         const color = device.color(k[0], k[1]);
@@ -129,31 +140,22 @@ export function Render() {
         packets[k[2]][pktIdx][bytePos]     = color[0];
         packets[k[2]][pktIdx][bytePos + 1] = color[1];
         packets[k[2]][pktIdx][bytePos + 2] = color[2];
+        
+        // simple check if color is not black to ensure we at least send
+        if (color[0] > 0 || color[1] > 0 || color[2] > 0) anyChanged = true;
     }
 
-    // skip write if nothing changed since last frame
-    let changed = !prevPackets;
-    if (!changed) {
-        for (let b = 0; b < 5 && !changed; b++) {
-            for (let p = 0; p < 2 && !changed; p++) {
-                for (let i = 0; i < 24; i++) {
-                    if (packets[b][p][i] !== prevPackets[b][p][i]) { changed = true; break; }
-                }
-            }
-        }
+    // Always send the entire sequence in strict order!
+    // The keyboard firmware ignores bank/offset bytes and relies entirely on packet sequence.
+    // Missing a packet misaligns the internal pointer and causes Slot 0 (Tab/Caps/Shift/Ctrl) to flicker.
+    SendBank(0, 0x00, packets[0][0]);
+    SendCommit();
+    SendBank(0, 0x08, packets[0][1]);
+    
+    for (let bank = 1; bank < 5; bank++) {
+        SendBank(bank, 0x00, packets[bank][0]);
+        SendBank(bank, 0x08, packets[bank][1]);
     }
-
-    if (changed) {
-        SendBank(0, 0x00, packets[0][0]);
-        SendCommit();
-        SendBank(0, 0x08, packets[0][1]);
-        for (let bank = 1; bank < 5; bank++) {
-            SendBank(bank, 0x00, packets[bank][0]);
-            SendBank(bank, 0x08, packets[bank][1]);
-        }
-    }
-
-    prevPackets = packets;
 }
 
 export function Shutdown() {
@@ -168,8 +170,13 @@ export function Shutdown() {
 }
 
 function SendBank(bank, offset, rgbData) {
+    // The first half of the row (offset 0) has 8 keys.
+    // The second half of the row (offset 8) only has 7 keys (for a 15-key row).
+    // If we tell the keyboard to write 8 keys at offset 8, it overwrites the next row's Slot 0 with black!
+    const keyCount = (offset === 0x08) ? 0x07 : 0x08;
+
     const packet = [
-        0x00, 0x07, 0x42, bank, offset, 0x08,
+        0x00, 0x07, 0x42, bank, offset, keyCount,
         ...rgbData,
         0x00, 0x00, 0x00
     ];
